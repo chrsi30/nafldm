@@ -1,3 +1,6 @@
+% Digitized data
+% https://www.sciencedirect.com/science/article/pii/S1550413118300548?via%3Dihub 
+
 %% Cohort 2
 D.Mardinoglu.co2.DNL.LF = [0 1 3 7 10 14];
 

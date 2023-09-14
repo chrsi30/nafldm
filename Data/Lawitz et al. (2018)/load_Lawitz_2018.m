@@ -1,4 +1,4 @@
-% BASED ON EXCEL file : Lawitz_digitized.xlsx
+% Digtized data - https://www.sciencedirect.com/science/article/abs/pii/S154235651830404X?via%3Dihub
 
 
 D.Lawitz2018.LF.Time = [0 28 84 ] ;

@@ -1,4 +1,4 @@
-
+% Digtized data - https://dom-pubs.onlinelibrary.wiley.com/doi/10.1111/dom.14272 Figure 3C. FT-401 group
 %% DNL
 A = [ -46.324488475133165
       -38.25957086672972
