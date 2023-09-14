@@ -1,0 +1,143 @@
+********** MODEL NAME
+nafldv5_IR_Hall
+********** MODEL NOTES
+********** MODEL STATES 
+
+d/dt(HTG)      = + vDietary_TG + vAdipose_NEFA + vDNL - vBOX - vVLDLsec
+d/dt(DNL)     =  vTCA - vDNL
+
+d/dt(G) = v1/rhog
+d/dt(ECF) = v2
+d/dt(F) = (1 - v3)*(k1 - v1)/rhof
+d/dt(L) = v3*(k1 - v1)/rhol
+d/dt(AT) = v5
+
+
+HTG(0)       = 160
+DNL(0)       = 1
+
+G(0)   = 0.5
+ECF(0) = 16
+F(0)   = 40   
+L(0)   = 49.5
+AT(0)  = 1
+
+********** MODEL PARAMETERS 
+kDTG          = 1
+kNEFAuptakeH  = 1
+ 
+kBOX          = 1
+ 
+kDNL          = 1
+kTCA          = 1
+kscale        = 1
+
+kVLDL         = 1 
+
+ky_DNL        = 1
+ky_VLDL       = 1
+ky_BHB        = 1
+
+cf      = 0.5
+ff      = 0.2
+cf0     = 0.5
+ff0     = 0.2
+EI0     = 2000
+EI      = 2000
+
+kIR     = 1
+
+RMRinit = 2000000 %cal, resting metabolic rate
+Ginit   = 0.500   %KG, inital amount of glucose
+BWinit  = 84     %KG inital body weight
+Finit   = 19      %19 %KG inital bpdy fat
+alfa    = 1
+
+EIrestriction2 = 1000
+
+pIR     = 0.01
+pxIR    = 0
+********** MODEL VARIABLES 
+EIr           = EI/EI0    
+
+input_fat     = (ff/ff0 )*EIr              
+input_carb    = (cf/cf0 )*EIr
+
+xF                     = (F/Finit)
+x_IR_fat               = max(0, 1 + kIR*(xF)  -kIR )
+
+vDietary_TG   = input_fat*kDTG
+
+vAdipose_NEFA = kNEFAuptakeH*x_IR_fat
+
+vTCA          = kTCA*input_carb*input_carb*x_IR_fat
+
+vDNL          = kDNL*DNL
+
+vBOX          = ( HTG*kBOX/( 1 + kscale*DNL) )
+  
+vVLDLsec      = HTG*kVLDL 
+
+vTOTAL_FAT_FLUX = vDietary_TG + vAdipose_NEFA + vDNL
+
+vTOTAL_FAT_FLUX_EFFLUX = vVLDLsec + vBOX
+
+
+yDNL  = vDNL*ky_DNL
+yVLDL = vVLDLsec*ky_VLDL
+yBOX  = vBOX*ky_BHB
+
+
+%% HALL
+fCIn = 0.5
+PAE  = 1.5
+rhol = 7.6e6
+rhof = 39.5e6
+gf   = 13000
+gl   = 92000
+etal = 960000
+etaf = 750000
+bAT  = 0.14
+tAT  = 14
+rhog = 17.6e6
+Na   = 3.22
+epNa = 3000
+epCI = 4000
+deltaNaDiet = 0
+bTEF = 0.1
+ECFinit = 0.7*0.235*BWinit
+CC = 10.4*rhol/rhof
+p = CC/(CC + F)
+EEinit = PAE*RMRinit
+EIninit = EEinit
+CIninit = fCIn*EIninit
+kg = CIninit/Ginit^2
+
+
+EIrestriction1 = EIrestriction2*4.183*10^3
+
+EInvalue = EIninit+EIrestriction1
+
+EIn = (1-alfa)*EIninit + alfa*EInvalue 
+CInvalue = fCIn*EInvalue
+CIn = (1-alfa)*CIninit + alfa*CInvalue
+BW = F + L + (1 + 2.7)*G + ECF
+PAL = PAE
+delta = ((1 - bTEF)*PAL - 1)*RMRinit/BWinit
+TEF = bTEF*(EIn - EIninit)
+Linit = BWinit - (Finit + Ginit + 2.7*Ginit + ECFinit)
+KK = EEinit - (gf*Finit + gl*Linit + delta*BWinit)
+EE = (-BW*delta*rhof*rhol - KK*rhof*rhol - rhof*rhol*TEF - rhof*rhol*AT + etal*p*rhof*CIn + etaf*rhol*CIn - etaf*p*rhol*CIn - etal*p*rhof*EIn - etaf*rhol*EIn + etaf*p*rhol*EIn - gf*rhof*rhol*F - etal*kg*p*rhof*G^2 - etaf*kg*rhol*G^2 + etaf*kg*p*rhol*G^2 - gl*rhof*rhol*L)/(-etal*p*rhof - etaf*rhol + etaf*p*rhol - rhof*rhol)
+k1 = EIn - EE
+
+%%
+LW  = 1500 %g
+ff2 = (((HTG*LW)/1000)/LW )*100 % is mg/g liver
+********** MODEL REACTIONS 
+v1 = (CIn - kg*(G)^2)
+v2 = (1/Na)*(deltaNaDiet - epNa*(ECF - ECFinit) - epCI*(1 - CIn/CIninit))
+v3 = p
+v5 = (bAT*(EIn - EIninit) - AT)/tAT
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
+********** MODEL MATLAB FUNCTIONS

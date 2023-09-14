@@ -1,0 +1,68 @@
+********** MODEL NAME
+nafldv5
+********** MODEL NOTES
+********** MODEL STATES 
+
+d/dt(HTG)      = + vDietary_TG + vAdipose_NEFA + vDNL - vBOX - vVLDLsec
+d/dt(DNL)     =  vTCA - vDNL
+
+HTG(0)       = 160
+DNL(0)       = 1
+
+********** MODEL PARAMETERS 
+kDTG          = 1
+kNEFAuptakeH  = 1
+ 
+kBOX          = 1
+ 
+kDNL          = 1
+kTCA          = 1
+kscale        = 1
+
+kVLDL         = 1 
+
+ky_DNL        = 1
+ky_VLDL       = 1
+ky_BHB        = 1
+
+cf      = 0.5
+ff      = 0.2
+cf0     = 0.5
+ff0     = 0.2
+EI0     = 2000
+EI      = 2000
+********** MODEL VARIABLES 
+
+EIr           = EI/EI0    
+
+input_fat     = (ff/ff0 )*EIr              
+input_carb    = (cf/cf0 )*EIr
+
+vDietary_TG   = input_fat*kDTG
+
+vAdipose_NEFA = kNEFAuptakeH
+
+vTCA          = kTCA*input_carb
+
+vDNL          = kDNL*DNL
+
+vBOX          = ( HTG*kBOX/( 1 + kscale*DNL) )
+  
+vVLDLsec      = HTG*kVLDL 
+
+vTOTAL_FAT_FLUX = vDietary_TG + vAdipose_NEFA + vDNL
+
+vTOTAL_FAT_FLUX_EFFLUX = vVLDLsec + vBOX
+
+yDNL  = vDNL*ky_DNL
+yVLDL = vVLDLsec*ky_VLDL
+yBOX  = vBOX*ky_BHB
+
+LW  = 1500 %g
+
+ff2 = (((HTG*LW)/1000)/LW )*100 % is mg/g liver
+
+********** MODEL REACTIONS 
+********** MODEL FUNCTIONS
+********** MODEL EVENTS
+********** MODEL MATLAB FUNCTIONS
