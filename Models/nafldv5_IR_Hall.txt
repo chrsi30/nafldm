@@ -70,7 +70,7 @@ vDietary_TG   = input_fat*kDTG
 
 vAdipose_NEFA = kNEFAuptakeH*x_IR_fat
 
-vTCA          = kTCA*input_carb*input_carb*x_IR_fat
+vTCA          = kTCA*input_carb*x_IR_fat
 
 vDNL          = kDNL*DNL
 
